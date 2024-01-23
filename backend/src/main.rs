@@ -1,11 +1,13 @@
+use crate::server::run_server;
 use tracing::info;
 
 mod api;
 mod core;
 mod server;
-#[tokio::main]
+#[rocket::main]
 async fn main() {
     tracing_subscriber::fmt::init();
     info!("BRUH");
     println!("Hello, world!");
+    run_server().await;
 }

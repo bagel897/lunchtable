@@ -38,8 +38,7 @@ async fn post_graphql(
 ) -> juniper_rocket::GraphQLResponse {
     request.execute(schema, context).await
 }
-#[rocket::main]
-async fn main() {
+pub(crate) async fn run_server() {
     _ = rocket::build()
         .manage(Database::new())
         .manage(schema())
