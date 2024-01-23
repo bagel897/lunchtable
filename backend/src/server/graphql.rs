@@ -14,7 +14,7 @@ pub(crate) struct Context;
 
 impl juniper::Context for Context {}
 
-struct Query;
+pub(crate) struct Query;
 #[graphql_object(context = Context)]
 impl Query {
     async fn get_status(user: Uuid) -> Status {
