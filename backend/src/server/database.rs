@@ -1,12 +1,12 @@
-use super::redis::Cache;
-
-pub struct Database {
-    cache: Cache,
-}
+#[derive(Clone)]
+pub struct Database {}
 impl Database {
     pub fn new() -> Self {
-        Self {
-            cache: Cache::new(),
-        }
+        Self {}
+    }
+}
+impl Default for Database {
+    fn default() -> Self {
+        Self::new()
     }
 }

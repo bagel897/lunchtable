@@ -9,14 +9,22 @@ use crate::{
     core::Error,
 };
 
-#[derive(Clone)]
-pub(crate) struct Context;
+use super::{database::Database, redis::Cache};
+
+#[derive(Clone, Default)]
+pub(crate) struct Context {
+    database: Database,
+    cache: Cache,
+}
 
 impl juniper::Context for Context {}
 
 pub(crate) struct Query;
 #[graphql_object(context = Context)]
 impl Query {
+    async fn simple() -> Uuid {
+        Uuid::default()
+    }
     async fn get_status(user: Uuid) -> Status {
         todo!()
     }

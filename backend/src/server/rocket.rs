@@ -39,8 +39,9 @@ async fn post_graphql(
     request.execute(schema, context).await
 }
 pub(crate) async fn run_server() {
+    let context = Context::default();
     _ = rocket::build()
-        .manage(Database::new())
+        .manage(context)
         .manage(schema())
         .mount(
             "/",
