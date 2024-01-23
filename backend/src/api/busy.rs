@@ -1,7 +1,5 @@
-use chrono::DateTime;
-use chrono_tz::Tz;
+use chrono::{DateTime, Utc};
 use juniper::{GraphQLEnum, GraphQLObject, GraphQLUnion};
-
 #[derive(GraphQLEnum)]
 enum Reason {
     MANUAL,
@@ -9,7 +7,7 @@ enum Reason {
 }
 #[derive(GraphQLObject)]
 pub struct Duration {
-    time: Option<DateTime<Tz::Etc__UTC>>,
+    time: Option<DateTime<Utc>>,
 }
 
 #[derive(GraphQLObject)]
