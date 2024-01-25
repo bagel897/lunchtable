@@ -11,3 +11,12 @@ async fn main() {
     println!("Hello, world!");
     run_server().await;
 }
+
+fn demo_ownership() {
+    let i = 0;
+    let j = &i;
+    let m = &i;
+    let k = &i;
+    let l = &i;
+    return i;
+}

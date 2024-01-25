@@ -22,6 +22,16 @@ impl Query {
         cache.get_status(user).await.unwrap()
     }
 }
+
+pub(crate) struct Context<'a> {
+    cache: &'a Cache,
+    // database: &'a DeadpoolDatabase
+}
+impl<'a> Context<'a> {
+    pub fn new(cache: &'a Cache) -> Self {
+        Self { cache }
+    }
+}
 // type MeetingStream = Pin<Box<dyn Stream<Item = Result<Match, Error>> + Send>>;
 // struct Subscription;
 //

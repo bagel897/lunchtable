@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-redis = { version = "0.24.0", features = ["tokio-comp"] }
+redis = { version = "0.23.3", features = ["tokio-comp"] }
 chrono = { version = "0.4.31", features = ["serde"] }
 juniper = { git = "https://github.com/graphql-rust/juniper.git", version = "0.16.0-dev", features = [
   "chrono",
