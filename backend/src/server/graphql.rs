@@ -1,5 +1,6 @@
 use std::{pin::Pin, time::Duration};
 
+use rocket_db_pools::{deadpool_redis, Database};
 // use futures::Stream;
 use juniper::{graphql_object, graphql_subscription, EmptyMutation, EmptySubscription, RootNode};
 use uuid::Uuid;
@@ -11,22 +12,14 @@ use crate::{
 
 use super::{database::Database, redis::Cache};
 
-#[derive(Clone, Default)]
-pub(crate) struct Context {
-    database: Database,
-    cache: Cache,
-}
-
-impl juniper::Context for Context {}
-
 pub(crate) struct Query;
-#[graphql_object(context = Context)]
+// #[graphql_object(context = Context)]
 impl Query {
     async fn simple() -> Uuid {
         Uuid::default()
     }
-    async fn get_status(user: Uuid) -> Status {
-        todo!()
+    async fn get_status<'c>(user: Uuid, cache: &Cache) -> Status {
+        cache.get_status(user).await.unwrap()
     }
 }
 // type MeetingStream = Pin<Box<dyn Stream<Item = Result<Match, Error>> + Send>>;

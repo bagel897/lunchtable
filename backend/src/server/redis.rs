@@ -1,25 +1,23 @@
-use redis::{aio::MultiplexedConnection, AsyncCommands, Client, Commands};
+use redis::{aio::MultiplexedConnection, AsyncCommands, Client};
+use rocket_db_pools::{
+    deadpool_redis::{self, redis::AsyncCommands},
+    Database,
+};
 use tracing::info;
 use uuid::Uuid;
 
 use crate::api::Status;
-#[derive(Clone, Debug)]
-pub struct Cache {
-    client: MultiplexedConnection,
-}
+#[derive(Database)]
+#[database("cache")]
+pub struct Cache(deadpool_redis::Pool);
 impl Cache {
-    pub async fn new() -> Self {
-        info!("Connecting to Redis");
-        Self {
-            client: Client::open("redis://127.0.0.1/")
-                .unwrap()
-                .get_multiplexed_async_connection()
-                .await
-                .unwrap(),
-        }
-    }
-
     pub async fn get_status(&self, user: Uuid) -> Result<Status, redis::RedisError> {
-        self.client.get(&user.to_bytes_le()).await
+        let conn = self.get().await.unwrap();
+        conn.get(&user.to_bytes_le()).await
+    }
+    pub async fn set_status(&self, user: Uuid, status: Status) -> Result<(), redis::RedisError> {
+        let conn = self.get().await.unwrap();
+        conn.set(&user.to_bytes_le(), status).await?;
+        Ok(())
     }
 }

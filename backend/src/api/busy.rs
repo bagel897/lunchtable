@@ -1,27 +1,29 @@
 use chrono::{DateTime, Utc};
 use juniper::{GraphQLEnum, GraphQLObject, GraphQLUnion};
-#[derive(GraphQLEnum)]
+use redis_macros::{FromRedisValue, ToRedisArgs};
+use serde::{Deserialize, Serialize};
+#[derive(GraphQLEnum, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
 enum Reason {
     MANUAL,
     CALENDAR,
 }
-#[derive(GraphQLObject)]
+#[derive(GraphQLObject, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
 pub struct Duration {
     time: Option<DateTime<Utc>>,
 }
 
-#[derive(GraphQLObject)]
+#[derive(GraphQLObject, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
 pub struct Busy {
     till: Duration,
     reason: Reason,
 }
-#[derive(GraphQLObject)]
+#[derive(GraphQLObject, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
 pub struct Free {
     till: Duration,
     reason: Reason,
 }
 
-#[derive(GraphQLUnion)]
+#[derive(GraphQLUnion, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
 pub enum Status {
     Free(Free),
     Busy(Busy),

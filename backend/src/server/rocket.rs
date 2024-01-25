@@ -1,11 +1,9 @@
 use rocket::{response::content::RawHtml, routes, State};
+use rocket_db_pools::Database;
 
-use crate::server::{
-    database::Database,
-    graphql::{Context, Schema},
-};
+use crate::server::graphql::Schema;
 
-use super::graphql::schema;
+use super::{graphql::schema, redis::Cache};
 
 #[rocket::get("/graphiql")]
 fn graphiql() -> RawHtml<String> {
@@ -23,7 +21,6 @@ fn playground() -> RawHtml<String> {
 // See details here: https://graphql.org/learn/serving-over-http#get-request
 #[rocket::get("/graphql?<request..>")]
 async fn get_graphql(
-    context: &State<Context>,
     request: juniper_rocket::GraphQLRequest,
     schema: &State<Schema>,
 ) -> juniper_rocket::GraphQLResponse {
@@ -32,16 +29,14 @@ async fn get_graphql(
 
 #[rocket::post("/graphql", data = "<request>")]
 async fn post_graphql(
-    context: &State<Context>,
     request: juniper_rocket::GraphQLRequest,
     schema: &State<Schema>,
 ) -> juniper_rocket::GraphQLResponse {
     request.execute(schema, context).await
 }
 pub(crate) async fn run_server() {
-    let context = Context::default();
     _ = rocket::build()
-        .manage(context)
+        .manage(Cache::init())
         .manage(schema())
         .mount(
             "/",
