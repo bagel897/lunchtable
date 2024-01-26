@@ -1,13 +1,10 @@
-use std::{
-    error,
-    fmt::{Display, Formatter, Result},
-};
+use thiserror::Error;
+use uuid::Uuid;
 
-#[derive(Clone, Debug)]
-pub enum Error {}
-impl Display for Error {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        f.write_str("BRUH")
-    }
+#[derive(Error, Debug)]
+pub enum LunchtableError {
+    #[error("user not found")]
+    UserNotFoundError { user: Uuid },
+    #[error("generic redis error")]
+    GenericRedisError(#[from] deadpool_redis::redis::RedisError),
 }
-impl error::Error for Error {}

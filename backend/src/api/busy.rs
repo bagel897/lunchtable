@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+use deadpool_redis::redis;
 use juniper::{GraphQLEnum, GraphQLObject, GraphQLUnion};
 use redis_macros::{FromRedisValue, ToRedisArgs};
 use serde::{Deserialize, Serialize};

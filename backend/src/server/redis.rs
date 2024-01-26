@@ -4,7 +4,7 @@ use deadpool_redis::{
 };
 use uuid::Uuid;
 
-use crate::api::Status;
+use crate::{api::Status, core::LunchtableError};
 
 use super::config::Config;
 #[derive(Clone)]
@@ -20,10 +20,11 @@ impl Cache {
                 .unwrap(),
         }
     }
-    pub async fn get_status(&self, user: Uuid) -> Result<Status, RedisError> {
+    pub async fn get_status(&self, user: Uuid) -> Result<Status, LunchtableError> {
         let mut conn = self.pool.get().await.unwrap();
 
-        conn.get(&user.to_bytes_le()).await
+        let result = conn.get(&user.to_bytes_le()).await?;
+        result
     }
     pub async fn set_status(&self, user: Uuid, status: Status) -> Result<(), RedisError> {
         let mut conn = self.pool.get().await.unwrap();

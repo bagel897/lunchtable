@@ -1,5 +1,5 @@
 use super::config::Config;
-use juniper::{graphql_object, EmptyMutation, EmptySubscription, RootNode};
+use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, RootNode};
 use uuid::Uuid;
 
 use crate::api::Status;
@@ -12,8 +12,8 @@ impl Query {
     async fn simple() -> Uuid {
         Uuid::default()
     }
-    async fn get_status<'c>(user: Uuid, context: &'c Context) -> Status {
-        context.cache.get_status(user).await.unwrap()
+    async fn get_status<'c>(user: Uuid, context: &'c Context) -> FieldResult<Status> {
+        context.cache.get_status(user).await.map_err(|e| e.into())
     }
 }
 
