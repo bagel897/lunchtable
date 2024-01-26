@@ -1,3 +1,4 @@
+mod config;
 mod database;
 mod graphql;
 mod redis;

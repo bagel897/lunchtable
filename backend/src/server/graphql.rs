@@ -1,37 +1,35 @@
-use std::{pin::Pin, time::Duration};
-
-use rocket_db_pools::{deadpool_redis, Database};
-// use futures::Stream;
-use juniper::{graphql_object, graphql_subscription, EmptyMutation, EmptySubscription, RootNode};
+use super::config::Config;
+use juniper::{graphql_object, EmptyMutation, EmptySubscription, RootNode};
 use uuid::Uuid;
 
-use crate::{
-    api::{Match, Status},
-    core::Error,
-};
+use crate::api::Status;
 
 use super::{database::Database, redis::Cache};
 
 pub(crate) struct Query;
-// #[graphql_object(context = Context)]
+#[graphql_object(context = Context)]
 impl Query {
     async fn simple() -> Uuid {
         Uuid::default()
     }
-    async fn get_status<'c>(user: Uuid, cache: &Cache) -> Status {
-        cache.get_status(user).await.unwrap()
+    async fn get_status<'c>(user: Uuid, context: &'c Context) -> Status {
+        context.cache.get_status(user).await.unwrap()
     }
 }
 
-pub(crate) struct Context<'a> {
-    cache: &'a Cache,
-    // database: &'a DeadpoolDatabase
+pub(crate) struct Context {
+    cache: Cache,
+    database: Database,
 }
-impl<'a> Context<'a> {
-    pub fn new(cache: &'a Cache) -> Self {
-        Self { cache }
+impl Context {
+    pub fn new(config: Config) -> Self {
+        Self {
+            cache: Cache::new(config),
+            database: Database::new(),
+        }
     }
 }
+impl juniper::Context for Context {}
 // type MeetingStream = Pin<Box<dyn Stream<Item = Result<Match, Error>> + Send>>;
 // struct Subscription;
 //

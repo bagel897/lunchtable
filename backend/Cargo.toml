@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-redis = { version = "0.23.3", features = ["tokio-comp"] }
+redis = { version = "0.24.0", features = ["tokio-comp"] }
 chrono = { version = "0.4.31", features = ["serde"] }
 juniper = { git = "https://github.com/graphql-rust/juniper.git", version = "0.16.0-dev", features = [
   "chrono",
@@ -20,7 +20,5 @@ uuid = { version = "1.7.0", features = ["v4"] }
 redis-macros = "0.2.1"
 serde = { version = "1.0.152", features = ["derive"] }
 serde_json = { version = "1.0.91" }
-rocket_db_pools = { version = "0.1.0", features = [
-  "deadpool_postgres",
-  "deadpool_redis",
-] }
+deadpool-redis = { version = "0.14.0", features = ["serde"] }
+config = "0.13.4"
