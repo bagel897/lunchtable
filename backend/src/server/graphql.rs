@@ -1,22 +1,41 @@
 use super::config::Config;
-use juniper::{graphql_object, EmptyMutation, EmptySubscription, FieldResult, RootNode};
+use juniper::{graphql_object, EmptySubscription, FieldResult, RootNode};
 use uuid::Uuid;
 
-use crate::api::Status;
+use crate::api::{Duration, Reason, Status, StatusKind};
 
 use super::{database::Database, redis::Cache};
 
 pub(crate) struct Query;
 #[graphql_object(context = Context)]
 impl Query {
-    async fn simple() -> Uuid {
-        Uuid::default()
-    }
-    async fn get_status<'c>(user: Uuid, context: &'c Context) -> FieldResult<Status> {
+    async fn get_status(user: Uuid, context: &'_ Context) -> FieldResult<Status> {
         context.cache.get_status(user).await.map_err(|e| e.into())
     }
 }
 
+pub(crate) struct Mutation;
+#[graphql_object(context = Context)]
+impl Mutation {
+    async fn set_status(
+        user: Uuid,
+        kind: StatusKind,
+        reason: Reason,
+        duration: Duration,
+        context: &'_ Context,
+    ) -> FieldResult<Status> {
+        let status = Status {
+            kind,
+            reason,
+            duration,
+        };
+        context
+            .cache
+            .set_status(user, status)
+            .await
+            .map_err(|e| e.into())
+    }
+}
 pub(crate) struct Context {
     cache: Cache,
     database: Database,
@@ -50,8 +69,8 @@ impl juniper::Context for Context {}
 //     }
 // }
 //
-pub type Schema = RootNode<'static, Query, EmptyMutation<Context>, EmptySubscription<Context>>;
+pub type Schema = RootNode<'static, Query, Mutation, EmptySubscription<Context>>;
 
 pub(crate) fn schema() -> Schema {
-    Schema::new(Query, EmptyMutation::new(), EmptySubscription::new())
+    Schema::new(Query, Mutation, EmptySubscription::new())
 }

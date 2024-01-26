@@ -1,31 +1,27 @@
 use chrono::{DateTime, Utc};
 use deadpool_redis::redis;
-use juniper::{GraphQLEnum, GraphQLObject, GraphQLUnion};
+use juniper::{GraphQLEnum, GraphQLObject, GraphQLScalar};
 use redis_macros::{FromRedisValue, ToRedisArgs};
 use serde::{Deserialize, Serialize};
 #[derive(GraphQLEnum, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
-enum Reason {
+pub enum Reason {
     MANUAL,
     CALENDAR,
 }
-#[derive(GraphQLObject, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
+#[derive(GraphQLEnum, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
+pub enum StatusKind {
+    Free,
+    Busy,
+}
+#[derive(GraphQLScalar, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
+#[graphql(transparent)]
 pub struct Duration {
-    time: Option<DateTime<Utc>>,
+    time: DateTime<Utc>,
 }
 
 #[derive(GraphQLObject, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
-pub struct Busy {
-    till: Duration,
-    reason: Reason,
-}
-#[derive(GraphQLObject, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
-pub struct Free {
-    till: Duration,
-    reason: Reason,
-}
-
-#[derive(GraphQLUnion, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
-pub enum Status {
-    Free(Free),
-    Busy(Busy),
+pub struct Status {
+    pub kind: StatusKind,
+    pub duration: Duration,
+    pub reason: Reason,
 }
