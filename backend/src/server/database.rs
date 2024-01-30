@@ -1,11 +1,12 @@
 use crate::{
     api::User,
-    core::LunchtableResult,
-    models::{UserActiveModel, UserModel},
+    core::{LunchtableError, LunchtableResult},
+    models::{UserActiveModel, UserEntity, UserModel},
 };
 
 use super::config::Config;
-use sea_orm::{ActiveModelTrait, DatabaseConnection};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait};
+use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct Database {
@@ -19,9 +20,16 @@ impl Database {
                 .unwrap(),
         }
     }
-    pub async fn create_user(&self, user: User) -> LunchtableResult<UserModel> {
+    pub async fn create_user(&self, user: User) -> LunchtableResult<User> {
         let db_user: UserActiveModel = user.into();
         let res = db_user.insert(&self.connection).await?;
-        Ok(res)
+        Ok(res.into())
+    }
+    pub async fn get_user(&self, user: Uuid) -> LunchtableResult<User> {
+        let res = UserEntity::find_by_id(user).one(&self.connection).await?;
+        match res {
+            Some(user) => Ok(user.into()),
+            None => Err(LunchtableError::UserNotFound { user }),
+        }
     }
 }

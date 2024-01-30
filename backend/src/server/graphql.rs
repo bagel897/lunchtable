@@ -14,7 +14,7 @@ impl Query {
     }
 
     async fn get_user(user: Uuid, context: &'_ Context) -> FieldResult<User> {
-        todo!()
+        context.database.get_user(user).await.map_err(|e| e.into())
     }
 }
 
