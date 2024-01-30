@@ -1,4 +1,4 @@
-use sea_orm::entity::prelude::*;
+use sea_orm::{entity::prelude::*, Set};
 use uuid::Uuid;
 
 use crate::api::User;
@@ -27,12 +27,12 @@ impl Related<Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-impl From<User> for Model {
+impl From<User> for ActiveModel {
     fn from(value: User) -> Self {
         // TODO: impl friends
         Self {
-            id: value.id,
-            name: value.name,
+            id: Set(value.id),
+            name: Set(value.name),
         }
     }
 }

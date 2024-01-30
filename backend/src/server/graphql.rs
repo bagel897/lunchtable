@@ -46,7 +46,7 @@ impl Mutation {
             name,
             ..Default::default()
         };
-        todo!();
+        context.database.create_user(user.clone()).await?;
         Ok(user)
     }
 }

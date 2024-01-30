@@ -1,7 +1,7 @@
 use crate::server::run_server;
 mod api;
 mod core;
-mod models;
+pub mod models;
 mod server;
 #[rocket::main]
 async fn main() {

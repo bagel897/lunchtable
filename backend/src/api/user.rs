@@ -4,7 +4,7 @@ use uuid::Uuid;
 // #[derive(GraphQLObject)]
 struct Login {}
 
-#[derive(GraphQLObject, Default)]
+#[derive(GraphQLObject, Default, Clone)]
 pub struct User {
     pub id: Uuid,
     pub name: String,
