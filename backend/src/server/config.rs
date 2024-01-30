@@ -2,7 +2,8 @@
 pub struct Config {
     #[serde(default)]
     pub redis: deadpool_redis::Config,
-    pub postgres: 
+    #[serde(default)]
+    pub postgres_url: String,
 }
 impl Config {
     pub fn from_env() -> Result<Self, config::ConfigError> {

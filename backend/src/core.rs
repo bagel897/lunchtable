@@ -1,2 +1,2 @@
 mod error;
-pub(crate) use error::LunchtableError;
+pub(crate) use error::{LunchtableError, LunchtableResult};

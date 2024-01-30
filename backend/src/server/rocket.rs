@@ -39,7 +39,7 @@ async fn post_graphql(
 pub(crate) async fn run_server() {
     let config = Config::from_env().unwrap();
     _ = rocket::build()
-        .manage(Context::new(config))
+        .manage(Context::new(config).await)
         .manage(schema())
         .mount(
             "/",

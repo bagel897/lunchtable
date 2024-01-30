@@ -13,7 +13,7 @@ impl Query {
         context.cache.get_status(user).await.map_err(|e| e.into())
     }
 
-    async fn get_name(user: Uuid, context: &'_ Context) -> FieldResult<String> {
+    async fn get_user(user: Uuid, context: &'_ Context) -> FieldResult<User> {
         todo!()
     }
 }
@@ -55,10 +55,10 @@ pub(crate) struct Context {
     database: Database,
 }
 impl Context {
-    pub fn new(config: Config) -> Self {
+    pub async fn new(config: Config) -> Self {
         Self {
+            database: Database::new(&config).await,
             cache: Cache::new(config),
-            database: Database::new(),
         }
     }
 }

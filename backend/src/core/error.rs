@@ -10,3 +10,4 @@ pub enum LunchtableError {
     #[error("Serialization/Deserialization error {0}")]
     Serde(#[from] serde_json::Error),
 }
+pub type LunchtableResult<T> = Result<T, LunchtableError>;
