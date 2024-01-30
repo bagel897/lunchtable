@@ -1,8 +1,14 @@
+use sea_orm::DatabaseConnection;
+
 #[derive(Clone)]
-pub struct Database {}
+pub struct Database {
+    connection: DatabaseConnection,
+}
 impl Database {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            connection: Database::connect(""),
+        }
     }
 }
 impl Default for Database {

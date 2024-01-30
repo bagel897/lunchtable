@@ -4,11 +4,11 @@ use uuid::Uuid;
 // #[derive(GraphQLObject)]
 struct Login {}
 
-#[derive(GraphQLObject)]
+#[derive(GraphQLObject, Default)]
 pub struct User {
-    id: Uuid,
-    name: String,
-    friends: Vec<Uuid>, // login: Login,
-                        // calendar_creds: todo!(),
-                        // profile_pic:todo!(),
+    pub id: Uuid,
+    pub name: String,
+    pub friends: Vec<Uuid>, // login: Login,
+                            // calendar_creds: todo!(),
+                            // profile_pic:todo!(),
 }

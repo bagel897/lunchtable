@@ -2,7 +2,7 @@ use super::config::Config;
 use juniper::{graphql_object, EmptySubscription, FieldResult, RootNode};
 use uuid::Uuid;
 
-use crate::api::{Duration, Reason, Status, StatusKind};
+use crate::api::{Duration, Reason, Status, StatusKind, User};
 
 use super::{database::Database, redis::Cache};
 
@@ -11,6 +11,10 @@ pub(crate) struct Query;
 impl Query {
     async fn get_status(user: Uuid, context: &'_ Context) -> FieldResult<Status> {
         context.cache.get_status(user).await.map_err(|e| e.into())
+    }
+
+    async fn get_name(user: Uuid, context: &'_ Context) -> FieldResult<String> {
+        todo!()
     }
 }
 
@@ -34,6 +38,16 @@ impl Mutation {
             .set_status(user, status)
             .await
             .map_err(|e| e.into())
+    }
+
+    async fn create_user(name: String, context: &'_ Context) -> FieldResult<User> {
+        let user = User {
+            id: Uuid::new_v4(),
+            name,
+            ..Default::default()
+        };
+        todo!();
+        Ok(user)
     }
 }
 pub(crate) struct Context {
