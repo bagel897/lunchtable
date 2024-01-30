@@ -1,39 +1,20 @@
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import React from "react";
-class StatusState {
-  state: String;
-  constructor() {
-    this.state = "free";
-  }
-}
-class Status extends React.Component {
-  state: StatusState;
-  constructor(props: any) {
-    super(props);
-    this.state = new StatusState();
-  }
-  toggle() {
-    console.log("Toggling");
-    this.setState((state, props) => {
-      if (state.state == "free") {
-        this.state.state = "busy";
-      } else {
-        this.state.state = "free";
-      }
-    });
-  }
-  print() {
-    return this.state.state;
-  }
-  render() {
-    return (
-      <button onClick={() => this.toggle()}>status is {this.print()}</button>
-    );
-  }
-}
+import { useState } from "react";
+
 function App() {
+  const [status, setStatus] = useState("free");
+
+  function toggleStatus() {
+    console.log("Toggling");
+    if (status === "free") {
+      setStatus("busy");
+    } else {
+      setStatus("free");
+    }
+  }
+
   return (
     <>
       <div>
@@ -46,7 +27,7 @@ function App() {
       </div>
       <h1>Lunchtable</h1>
       <div className="card">
-        <Status />
+        <button onClick={() => toggleStatus()}>status is {status}</button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
