@@ -1,7 +1,8 @@
+use entity::UserActiveModel;
+use entity::UserModel;
 use juniper::GraphQLObject;
+use sea_orm::Set;
 use uuid::Uuid;
-
-use crate::models::UserModel;
 
 // #[derive(GraphQLObject)]
 struct Login {}
@@ -21,6 +22,20 @@ impl From<UserModel> for User {
             id: value.id,
             name: value.name,
             ..Default::default()
+        }
+    }
+}
+// impl Into<UserActiveModel> for User {
+//     fn into(self) -> UserActiveModel {
+//         UserActiveModel {}
+//     }
+// }
+impl From<User> for UserModel {
+    fn from(value: User) -> Self {
+        // TODO: impl friends
+        Self {
+            id: value.id,
+            name: value.name,
         }
     }
 }

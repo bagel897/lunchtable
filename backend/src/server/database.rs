@@ -1,8 +1,8 @@
 use crate::{
     api::User,
     core::{LunchtableError, LunchtableResult},
-    models::{UserActiveModel, UserEntity, UserModel},
 };
+use entity::{UserActiveModel, UserEntity, UserModel};
 
 use super::config::Config;
 use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait};
@@ -21,7 +21,8 @@ impl Database {
         }
     }
     pub async fn create_user(&self, user: User) -> LunchtableResult<User> {
-        let db_user: UserActiveModel = user.into();
+        let _db_user: UserModel = user.into();
+        let db_user: UserActiveModel = _db_user.into();
         let res = db_user.insert(&self.connection).await?;
         Ok(res.into())
     }

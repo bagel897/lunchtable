@@ -1,7 +1,5 @@
-use sea_orm::{entity::prelude::*, Set};
+use sea_orm::entity::prelude::*;
 use uuid::Uuid;
-
-use crate::api::User;
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "user_table")]
@@ -27,12 +25,3 @@ impl Related<Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-impl From<User> for ActiveModel {
-    fn from(value: User) -> Self {
-        // TODO: impl friends
-        Self {
-            id: Set(value.id),
-            name: Set(value.name),
-        }
-    }
-}
