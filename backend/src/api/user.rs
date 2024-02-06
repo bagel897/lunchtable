@@ -1,7 +1,5 @@
-use entity::UserActiveModel;
 use entity::UserModel;
 use juniper::GraphQLObject;
-use sea_orm::Set;
 use uuid::Uuid;
 
 // #[derive(GraphQLObject)]

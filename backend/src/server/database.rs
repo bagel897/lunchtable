@@ -3,9 +3,10 @@ use crate::{
     core::{LunchtableError, LunchtableResult},
 };
 use entity::{UserActiveModel, UserEntity, UserModel};
+use tracing::info;
 
 use super::config::Config;
-use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait, Schema};
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -14,11 +15,23 @@ pub struct Database {
 }
 impl Database {
     pub async fn new(config: &Config) -> Self {
-        Self {
-            connection: sea_orm::Database::connect(config.postgres_url.clone())
-                .await
-                .unwrap(),
-        }
+        let connection = sea_orm::Database::connect(config.postgres_url.clone())
+            .await
+            .unwrap();
+        let builder = connection.get_database_backend();
+        let schema = Schema::new(builder);
+        info!("BRUH");
+        let statement = builder.build(
+            schema
+                .create_table_from_entity(UserEntity)
+                // .table("user_table")
+                .if_not_exists(),
+        );
+        info!("BRUH");
+        connection.execute(statement).await.unwrap();
+
+        // Migrator::up(&connection, None).await.unwrap();
+        Self { connection }
     }
     pub async fn create_user(&self, user: User) -> LunchtableResult<User> {
         let _db_user: UserModel = user.into();
