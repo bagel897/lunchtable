@@ -18,7 +18,7 @@ rocket = { version = "0.5.0", features = ["uuid"] }
 tokio = { version = "1.35.1", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
-uuid = { version = "1.7.0", features = ["v4"] }
+uuid = { version = "1.7.0", features = ["v4", "fast-rng"] }
 redis-macros = "0.2.1"
 serde = { version = "1.0.152", features = ["derive"] }
 serde_json = { version = "1.0.91" }
@@ -26,9 +26,6 @@ deadpool-redis = { version = "0.14.0", features = ["serde"] }
 config = "0.13.4"
 thiserror = "1.0.56"
 bytes = "1.5.0"
-sea-orm = { version = "0.12.12", features = [
-  "sqlx-postgres",
-  "runtime-tokio-native-tls",
-] }
+sea-orm = { version = "0.12.12", features = ["sqlx-postgres", "runtime-tokio-native-tls"] }
 entity = { version = "0.1.0", path = "entity" }
 migration = { version = "0.1.0", path = "migration" }

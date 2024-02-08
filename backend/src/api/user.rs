@@ -34,6 +34,7 @@ impl From<User> for UserModel {
         Self {
             id: value.id,
             name: value.name,
+            friends: value.friends,
         }
     }
 }
