@@ -3,22 +3,26 @@ import { createContext, useContext } from "react";
 
 const GET_USER_QUERY = gql(/* GraphQL */ `
   query GetUser($user: Uuid!) {
-    getStatus(user: $user) {
-      kind
+    getUser(user: $user) {
+      name
     }
   }
 `);
 const CREATE_USER_MUTATION = gql(/* GraphQL */ `
-  mutation ($name: String!) {
+  mutation createUser($name: String!) {
     createUser(name: $name) {
       name
       id
     }
   }
 `);
-export const UserContext = createContext("");
+export const UserContext = createContext(null);
+export const UserContextDispatch = createContext(null);
 function UserName() {
   const user = useContext(UserContext);
+  if (user == null) {
+    return "";
+  }
   const { loading, data } = useQuery(
     GET_USER_QUERY,
 
@@ -26,15 +30,16 @@ function UserName() {
 
     { variables: { user: user } },
   );
+  console.log("", data);
   return (
-    <div>{loading ? <div> "loading" </div> : data && data.kind.map()} </div>
+    <div>{loading ? <div> "loading" </div> : data && data.getUser.name} </div>
   );
 }
 
 function UserWidget() {
   var user = useContext(UserContext);
-  const [mutateFunction, { data, loading, error }] =
-    useMutation(CREATE_USER_MUTATION);
+  var setUser = useContext(UserContextDispatch);
+  const [mutateFunction] = useMutation(CREATE_USER_MUTATION);
   function createUser(name: String) {
     console.log("Creating User", name);
     mutateFunction({
@@ -47,22 +52,18 @@ function UserWidget() {
           },
         },
       ) {
-        console.log("hi ", id);
-        user = id;
+        setUser(id);
       },
     });
   }
   return (
     <div className="card">
-      {loading ? (
-        "loading"
-      ) : user != "" ? (
+      {user != null ? (
         <div>
           <UserName />
         </div>
       ) : (
         <div>
-          <h3>User</h3>
           <input type="text" />
           <br />
           <button

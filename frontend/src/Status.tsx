@@ -11,6 +11,9 @@ const GET_STATUS_QUERY = gql(/* GraphQL */ `
 `);
 function BusyIndicator() {
   const user = useContext(UserContext);
+  if (user == "" || user == null) {
+    return "";
+  }
   const { loading, data } = useQuery(
     GET_STATUS_QUERY,
 
