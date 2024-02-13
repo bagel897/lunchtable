@@ -1,5 +1,6 @@
 use super::graphql::Context;
-use rocket::{response::content::RawHtml, routes, State};
+use rocket::{http::Method, response::content::RawHtml, routes, State};
+use rocket_cors::{AllowedHeaders, AllowedOrigins};
 
 use crate::server::graphql::Schema;
 
@@ -37,6 +38,21 @@ async fn post_graphql(
     request.execute(schema, context).await
 }
 pub(crate) async fn run_server() {
+    let allowed_origins = AllowedOrigins::all();
+
+    // You can also deserialize this
+    let cors = rocket_cors::CorsOptions {
+        allowed_origins,
+        allowed_methods: vec![Method::Get, Method::Post, Method::Options]
+            .into_iter()
+            .map(From::from)
+            .collect(),
+        allowed_headers: AllowedHeaders::all(),
+        allow_credentials: true,
+        ..Default::default()
+    }
+    .to_cors()
+    .unwrap();
     let config = Config::from_env().unwrap();
     _ = rocket::build()
         .manage(Context::new(config).await)
@@ -45,6 +61,7 @@ pub(crate) async fn run_server() {
             "/",
             routes![graphiql, playground, get_graphql, post_graphql],
         )
+        .attach(cors)
         .launch()
         .await
         .expect("server to launch");

@@ -1,5 +1,6 @@
 use super::config::Config;
 use juniper::{graphql_object, EmptySubscription, FieldResult, RootNode};
+use tracing::error;
 use uuid::Uuid;
 
 use crate::api::{Duration, Reason, Status, StatusKind, User};
@@ -10,11 +11,17 @@ pub(crate) struct Query;
 #[graphql_object(context = Context)]
 impl Query {
     async fn get_status(user: Uuid, context: &'_ Context) -> FieldResult<Status> {
-        context.cache.get_status(user).await.map_err(|e| e.into())
+        context.cache.get_status(user).await.map_err(|e| {
+            error!("{:?}", e);
+            e.into()
+        })
     }
 
     async fn get_user(user: Uuid, context: &'_ Context) -> FieldResult<User> {
-        context.database.get_user(user).await.map_err(|e| e.into())
+        context.database.get_user(user).await.map_err(|e| {
+            error!("{:?}", e);
+            e.into()
+        })
     }
 }
 
@@ -33,11 +40,10 @@ impl Mutation {
             reason,
             duration,
         };
-        context
-            .cache
-            .set_status(user, status)
-            .await
-            .map_err(|e| e.into())
+        context.cache.set_status(user, status).await.map_err(|e| {
+            error!("{:?}", e);
+            e.into()
+        })
     }
 
     async fn create_user(name: String, context: &'_ Context) -> FieldResult<User> {
