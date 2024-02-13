@@ -1,57 +1,8 @@
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { useState } from "react";
-import { gql, useQuery } from "@apollo/client";
-
-const GET_STATUS_QUERY = gql(/* GraphQL */ `
-  query GetStatus($user: Uuid!) {
-    getStatus(user: $user) {
-      kind
-    }
-  }
-`);
-const USER = "7f47f29f-0140-44f0-8d7f-b08779a09f8b";
-function BusyIndicator() {
-  const { loading, data } = useQuery(
-    GET_STATUS_QUERY,
-
-    // variables are also typed!
-
-    { variables: { user: USER } },
-  );
-  const [status, setStatus] = useState("free");
-
-  function toggleStatus() {
-    console.log("Toggling");
-    if (status === "free") {
-      setStatus("busy");
-    } else {
-      setStatus("free");
-    }
-  }
-  return (
-    <div className="card">
-      <h3>Status</h3>
-      {loading ? (
-        <p>Loading ...</p>
-      ) : (
-        <div>
-          <button onClick={() => toggleStatus()}>
-            status is
-            {data &&
-              data.kind.map((status: any) => {
-                String(status);
-              })}
-          </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
+import BusyIndicator from "./Status";
+import UserWidget from "./User";
 function App() {
   return (
     <>
@@ -64,6 +15,7 @@ function App() {
         </a>
       </div>
       <div>
+        <UserWidget />
         <BusyIndicator />
       </div>
       <h1>Lunchtable</h1>
