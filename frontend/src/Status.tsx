@@ -1,10 +1,22 @@
-import { gql, useQuery } from "@apollo/client";
-import { useContext, useState } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useContext } from "react";
 import { UserContext } from "./User";
 
 const GET_STATUS_QUERY = gql(/* GraphQL */ `
   query GetStatus($user: Uuid!) {
     getStatus(user: $user) {
+      kind
+    }
+  }
+`);
+const SET_STATUS = gql(/* GraphQL */ `
+  mutation SetStatus($user: Uuid!, $kind: StatusKind!) {
+    setStatus(
+      user: $user
+      kind: $kind
+      reason: MANUAL
+      duration: "2016-01-01T13:10:20Z"
+    ) {
       kind
     }
   }
@@ -21,14 +33,14 @@ function BusyIndicator() {
 
     { variables: { user: user } },
   );
-  const [status, setStatus] = useState("free");
+  const [mutateFunction] = useMutation(SET_STATUS);
 
-  function toggleStatus() {
+  function toggleStatus(status: String) {
     console.log("Toggling");
     if (status === "free") {
-      setStatus("busy");
+      mutateFunction({ variables: { user: user, status: "BUSY" } });
     } else {
-      setStatus("free");
+      mutateFunction({ variables: { user: user, status: "free" } });
     }
   }
   return (
@@ -38,16 +50,12 @@ function BusyIndicator() {
         <p>Loading ...</p>
       ) : (
         <div>
-          <button onClick={() => toggleStatus()}>
-            status is
-            {data &&
-              data.kind.map((status: any) => {
-                String(status);
-              })}
-          </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
+          {data &&
+            data.kind.map((status: any) => {
+              <button onClick={() => toggleStatus(status)}>
+                status is {status}
+              </button>;
+            })}
         </div>
       )}
     </div>
