@@ -36,7 +36,20 @@ function UserWidget() {
   );
   function createUser(name: String) {
     console.log("Creating User", name);
-    mutateFunction({ variables: { name: name } });
+    mutateFunction({
+      variables: { name: name },
+      update(
+        _,
+        {
+          data: {
+            createUser: { id },
+          },
+        },
+      ) {
+        console.log("hi ", id);
+        user = id;
+      },
+    });
   }
   return (
     <div className="card">
