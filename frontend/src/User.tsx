@@ -10,7 +10,10 @@ const GET_USER_QUERY = gql(/* GraphQL */ `
 `);
 const CREATE_USER_MUTATION = gql(/* GraphQL */ `
   mutation ($name: String!) {
-    createUser
+    createUser(name: $name) {
+      name
+      id
+    }
   }
 `);
 export const UserContext = createContext("");
@@ -29,11 +32,9 @@ function UserName() {
 }
 
 function UserWidget() {
-  const user = useContext(UserContext);
-  const [mutateFunction, { data, loading, error }] = useMutation(
-    CREATE_USER_MUTATION,
-    { variables: { name: name } },
-  );
+  var user = useContext(UserContext);
+  const [mutateFunction, { data, loading, error }] =
+    useMutation(CREATE_USER_MUTATION);
   function createUser(name: String) {
     console.log("Creating User", name);
     mutateFunction({
