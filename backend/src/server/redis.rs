@@ -41,7 +41,7 @@ impl Cache {
         let res = conn.get(&user.to_bytes_le()).await;
         Self::check_not_found(user, res)
     }
-    pub async fn set_status(&self, user: Uuid, status: Status) -> LunchtableResult<Status> {
+    pub async fn set_status(&self, user: Uuid, status: Status) -> LunchtableResult<()> {
         let mut conn = self.pool.get().await.unwrap();
         let res = conn.set(&user.to_bytes_le(), status).await;
         Self::check_not_found(user, res)

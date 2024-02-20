@@ -40,10 +40,8 @@ impl Mutation {
             reason,
             duration,
         };
-        context.cache.set_status(user, status).await.map_err(|e| {
-            error!("{:?}", e);
-            e.into()
-        })
+        context.cache.set_status(user, status.clone()).await?;
+        Ok(status)
     }
 
     async fn create_user(name: String, context: &'_ Context) -> FieldResult<User> {

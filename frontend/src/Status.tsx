@@ -1,7 +1,9 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useContext } from "react";
 import { UserContext } from "./User";
 
+import { gql } from "../src/__generated__/gql";
+import { StatusKind } from "./__generated__/graphql";
 const GET_STATUS_QUERY = gql(/* GraphQL */ `
   query GetStatus($user: Uuid!) {
     getStatus(user: $user) {
@@ -33,14 +35,15 @@ function BusyIndicator() {
 
     { variables: { user: user } },
   );
-  const [mutateFunction] = useMutation(SET_STATUS);
+  const [mutateFunction] = useMutation(SET_STATUS, {
+    refetchQueries: [GET_STATUS_QUERY, "GetStatus"],
+  });
 
-  function toggleStatus(status: String) {
-    console.log("Toggling");
-    if (status === "free") {
-      mutateFunction({ variables: { user: user, kind: "BUSY" } });
+  function toggleStatus(status: StatusKind) {
+    if (status === StatusKind.Free) {
+      mutateFunction({ variables: { user: user, kind: StatusKind.Busy } });
     } else {
-      mutateFunction({ variables: { user: user, kind: "free" } });
+      mutateFunction({ variables: { user: user, kind: StatusKind.Free } });
     }
   }
   return (
@@ -50,13 +53,11 @@ function BusyIndicator() {
         <p>Loading ...</p>
       ) : (
         <div>
-          {console.log(data)}
-          {data.kind &&
-            data.kind.map((status: any) => {
-              <button onClick={() => toggleStatus(status)}>
-                status is {status}
-              </button>;
-            })}
+          {data && (
+            <button onClick={() => toggleStatus(data.getStatus.kind)}>
+              status is {data.getStatus.kind}
+            </button>
+          )}
         </div>
       )}
     </div>
