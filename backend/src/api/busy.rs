@@ -22,6 +22,6 @@ pub struct Duration {
 #[derive(GraphQLObject, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
 pub struct Status {
     pub kind: StatusKind,
-    pub duration: Duration,
+    pub duration: Option<Duration>,
     pub reason: Reason,
 }

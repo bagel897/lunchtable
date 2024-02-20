@@ -38,9 +38,9 @@ function BusyIndicator() {
   function toggleStatus(status: String) {
     console.log("Toggling");
     if (status === "free") {
-      mutateFunction({ variables: { user: user, status: "BUSY" } });
+      mutateFunction({ variables: { user: user, kind: "BUSY" } });
     } else {
-      mutateFunction({ variables: { user: user, status: "free" } });
+      mutateFunction({ variables: { user: user, kind: "free" } });
     }
   }
   return (
@@ -50,7 +50,8 @@ function BusyIndicator() {
         <p>Loading ...</p>
       ) : (
         <div>
-          {data &&
+          {console.log(data)}
+          {data.kind &&
             data.kind.map((status: any) => {
               <button onClick={() => toggleStatus(status)}>
                 status is {status}

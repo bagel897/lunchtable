@@ -6,6 +6,7 @@ use deadpool_redis::{
     redis::{AsyncCommands, ErrorKind, RedisError},
     Pool,
 };
+use tracing::error;
 use uuid::Uuid;
 
 use super::config::Config;
@@ -27,6 +28,7 @@ impl Cache {
             Ok(t) => Ok(t),
             Err(e) => {
                 if e.kind() == ErrorKind::TypeError {
+                    error!("{:?}", e);
                     Err(LunchtableError::UserNotFound { user })
                 } else {
                     Err(e.into())
@@ -40,6 +42,11 @@ impl Cache {
         Self::check_not_found(user, res)
     }
     pub async fn set_status(&self, user: Uuid, status: Status) -> LunchtableResult<Status> {
+        let mut conn = self.pool.get().await.unwrap();
+        let res = conn.set(&user.to_bytes_le(), status).await;
+        Self::check_not_found(user, res)
+    }
+    pub async fn add_status(&self, user: Uuid, status: Status) -> LunchtableResult<()> {
         let mut conn = self.pool.get().await.unwrap();
         let res = conn.set(&user.to_bytes_le(), status).await;
         Self::check_not_found(user, res)

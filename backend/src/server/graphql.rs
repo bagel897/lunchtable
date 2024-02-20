@@ -32,7 +32,7 @@ impl Mutation {
         user: Uuid,
         kind: StatusKind,
         reason: Reason,
-        duration: Duration,
+        duration: Option<Duration>,
         context: &'_ Context,
     ) -> FieldResult<Status> {
         let status = Status {
@@ -53,6 +53,12 @@ impl Mutation {
             ..Default::default()
         };
         context.database.create_user(user.clone()).await?;
+        let status = Status {
+            kind: StatusKind::Busy,
+            reason: Reason::MANUAL,
+            duration: None,
+        };
+        context.cache.add_status(user.id, status).await?;
         Ok(user)
     }
 }
