@@ -43,6 +43,11 @@ impl Mutation {
         context.cache.set_status(user, status.clone()).await?;
         Ok(status)
     }
+    async fn add_friend(friend: Uuid, new_friend: Uuid, context: &'_ Context) -> FieldResult<User> {
+        let user = context.database.add_friend(friend, new_friend).await?;
+        context.database.add_friend(new_friend, friend).await?;
+        Ok(user)
+    }
 
     async fn create_user(name: String, context: &'_ Context) -> FieldResult<User> {
         let user = User {
