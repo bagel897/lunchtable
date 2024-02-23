@@ -1,6 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { createContext, useContext } from "react";
-
+import Button from "@mui/material/Button";
+import { TextField } from "@mui/material";
 const GET_USER_QUERY = gql(/* GraphQL */ `
   query GetUser($user: Uuid!) {
     getUser(user: $user) {
@@ -64,9 +65,9 @@ function UserWidget() {
         </div>
       ) : (
         <div>
-          <input type="text" />
+          <TextField type="text" variant="outlined" />
           <br />
-          <button
+          <Button
             onClick={() => createUser(document.querySelector("input")?.value)}
           >
             Create User
@@ -74,7 +75,7 @@ function UserWidget() {
             {/*   data.kind.map((status: any) => { */}
             {/*     String(status); */}
             {/*   })} */}
-          </button>
+          </Button>
         </div>
       )}
     </div>

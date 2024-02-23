@@ -4,6 +4,7 @@ import { UserContext } from "./User";
 
 import { gql } from "../src/__generated__/gql";
 import { StatusKind } from "./__generated__/graphql";
+import { Button } from "@mui/material";
 const GET_STATUS_QUERY = gql(/* GraphQL */ `
   query GetStatus($user: Uuid!) {
     getStatus(user: $user) {
@@ -48,15 +49,14 @@ function BusyIndicator() {
   }
   return (
     <div className="card">
-      <h3>Status</h3>
       {loading ? (
         <p>Loading ...</p>
       ) : (
         <div>
           {data && (
-            <button onClick={() => toggleStatus(data.getStatus.kind)}>
-              status is {data.getStatus.kind}
-            </button>
+            <Button onClick={() => toggleStatus(data.getStatus.kind)}>
+              {data.getStatus.kind}
+            </Button>
           )}
         </div>
       )}
