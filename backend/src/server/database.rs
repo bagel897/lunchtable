@@ -6,7 +6,10 @@ use entity::{UserActiveModel, UserEntity, UserModel};
 use tracing::info;
 
 use super::config::Config;
-use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait, Schema, Set};
+use sea_orm::{
+    ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait, Schema, Set,
+    TransactionTrait,
+};
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -35,14 +38,18 @@ impl Database {
     }
 
     pub async fn add_friend(&self, friend: Uuid, new_friend: Uuid) -> LunchtableResult<User> {
-        let res = UserEntity::find_by_id(friend).one(&self.connection).await?;
-        let mut user: UserActiveModel = match res {
-            Some(user) => Ok(user.into()),
+        let txn = self.connection.begin().await?;
+        let res = UserEntity::find_by_id(friend).one(&txn).await?;
+        let user: UserModel = match res {
+            Some(user) => Ok(user),
             None => Err(LunchtableError::UserNotFound { user: friend }),
         }?;
-        let friends2 = vec![new_friend];
-        user.friends = Set(friends2);
-        let res = user.update(&self.connection).await?;
+        let mut friends = user.friends.clone();
+        friends.push(new_friend);
+        let mut active_user: UserActiveModel = user.into();
+        active_user.friends = Set(friends);
+        let res = active_user.update(&txn).await?;
+        txn.commit().await?;
         Ok(res.into())
     }
     pub async fn create_user(&self, user: User) -> LunchtableResult<User> {
